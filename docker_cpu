@@ -47,7 +47,7 @@ if [ "$1" = "config" ]; then
         echo 'graph_scale no'
         echo 'graph_vlabel CPU usage'
         echo 'graph_category docker'
-        for container in $($DockerCMD ps -q --no-trunc)
+        for container in $($DockerCMD ps -aq --no-trunc)
         do
           cont=$(echo $container | cut -c -10)
           echo "docker_$cont.label docker_$cont"
@@ -57,7 +57,7 @@ if [ "$1" = "config" ]; then
         exit 0
 fi
 
-for container in $($DockerCMD ps -q --no-trunc)
+for container in $($DockerCMD ps -aq --no-trunc)
 do
   cont=$(echo $container | cut -c -10)
   value=`awk '{sum+=$2} END {print sum}' /sys/fs/cgroup/cpuacct/system.slice/docker-$container.scope/cpuacct.stat`
