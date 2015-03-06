@@ -47,13 +47,13 @@ if [ "$1" = "config" ]; then
         echo 'graph_args --base 1024 -l 0 '
         echo 'graph_vlabel Bytes'
         echo 'graph_category docker'
-        for container in $($DockerCMD ps -q --no-trunc)
+        for container in $($DockerCMD ps -aq --no-trunc)
         do
           cont=$(echo $container | cut -c -10)
           echo "$cont.label $cont"
           echo "$cont.type GAUGE"
         done
-        for container in $($DockerCMD ps -q --no-trunc)
+        for container in $($DockerCMD ps -aq --no-trunc)
         do
           cont=$(echo $container | cut -c -10)
           echo "multigraph docker_memory.$cont"
@@ -78,7 +78,7 @@ if [ "$1" = "config" ]; then
         exit 0
 fi
 
-for container in $($DockerCMD ps -q --no-trunc)
+for container in $($DockerCMD ps -aq --no-trunc)
 do
   cont=$(echo $container | cut -c -10)
   value=$(awk '/total_rss |total_cache |total_swap / {print$2}' /sys/fs/cgroup/memory/system.slice/docker-$container.scope/memory.stat | awk '{sum+=$1}END{print sum}')
@@ -87,7 +87,7 @@ done
 
 
 
-for container in $($DockerCMD ps -q --no-trunc)
+for container in $($DockerCMD ps -aq --no-trunc)
 do
   cont=$(echo $container | cut -c -10)
   echo "multigraph docker_memory.$cont"
